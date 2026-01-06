@@ -28,7 +28,11 @@ func NewBook(title string, author string) Book {
 	return book
 }
 
-func main() {
+var (
+	client *mongo.Client
+)
+
+func initClient() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -36,12 +40,22 @@ func main() {
 
 	uri := os.Getenv("MONGODB_URI")
 
-	client, err := mongo.Connect(options.Client().
+	client, err = mongo.Connect(options.Client().
 		ApplyURI(uri))
 	if err != nil {
 		panic(err)
 	}
 
+}
+
+func createDatabase() {
+
+}
+
+func main() {
+	initClient()
+
+	// Close client connection if the program crash or is terminate by force
 	defer func() {
 		if err := client.Disconnect(context.TODO()); err != nil {
 			panic(err)
@@ -55,7 +69,7 @@ func main() {
 	doc := NewBook("Atonement", "Ian McEwan")
 
 	// Insert the new document
-	result, err := coll.InsertOne(context.TODO(), doc)
+	result, _ := coll.InsertOne(context.TODO(), doc)
 
 	// Print the ID of the document (automatically create by mongo)
 	fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
