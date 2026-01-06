@@ -2,31 +2,17 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"log"
 	"os"
-	"time"
+	"tidy/models"
 
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
-
-type Book struct {
-	Title     string    `json:"title" bson:"title"`
-	Author    string    `json:"author" bson:"author"`
-	CreatedAt time.Time `json:"created_at" bson:"created_at"`
-	UpdateAt  time.Time `json:"update_at" bson:"update_at"`
-}
-
-func NewBook(title string, author string) Book {
-	book := Book{}
-	book.Title = title
-	book.Author = author
-	book.CreatedAt = time.Now()
-	book.UpdateAt = time.Now()
-	return book
-}
 
 var (
 	client *mongo.Client
@@ -45,15 +31,60 @@ func initClient() {
 	if err != nil {
 		panic(err)
 	}
-
 }
 
-func createDatabase() {
+func randomStringCrypto(length int) (string, error) {
+	bytes := make([]byte, length)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(bytes)[:length], nil
+}
 
+/*
+TODO: Should take in enter a schema of a database (bjson) :
+
+	{
+		"database_name": "...",
+		"collections": [
+			"...",
+			"...",
+		]
+	}
+*/
+func createDatabase(databaseName string, collections []string) {
+	for _, collection := range collections {
+		client.Database(databaseName).CreateCollection(context.Background(), collection)
+	}
+}
+
+func createNewShortUrl(longUrl string) {
+	// Select a collection
+	coll := client.Database("db").Collection("url")
+
+	random, err := randomStringCrypto(10)
+	if err != nil {
+		fmt.Println("Error generating random string:", err)
+		return
+	}
+	fmt.Println("Random String:", random)
+
+	url := models.NewUrl(longUrl, random)
+
+	// Insert the new document
+	result, _ := coll.InsertOne(context.TODO(), url)
+
+	// Print the ID of the document (automatically create by mongo)
+	fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
 }
 
 func main() {
 	initClient()
+
+	collections := []string{"user", "url"}
+
+	createDatabase("db", collections)
 
 	// Close client connection if the program crash or is terminate by force
 	defer func() {
@@ -62,17 +93,7 @@ func main() {
 		}
 	}()
 
-	// Select a collection
-	coll := client.Database("db").Collection("books")
-
-	// Create the document for insert
-	doc := NewBook("Atonement", "Ian McEwan")
-
-	// Insert the new document
-	result, _ := coll.InsertOne(context.TODO(), doc)
-
-	// Print the ID of the document (automatically create by mongo)
-	fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
+	createNewShortUrl("https://google.com")
 
 	/*
 		coll := client.Database("sample_mflix").Collection("movies")
