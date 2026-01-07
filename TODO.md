@@ -1,16 +1,24 @@
-- Créer une URL courte
-- Rediriger vers une URL longue
+ # TODO :
 
-- Expiration des liens
-- Stats de clics
-- URLs personnalisées
-- Suppression / désactivation
+- Add auth routes :
+- Login
+- Register
+
+- Add route for create personalized url (random short code or selected by the user)
+
+- Expired links
+- URLs personalized
+- Delete / desactivate a url
 - Rate limiting
 
-- Comptage précis des clics
-- Géolocalisation approximative
-- Anti-abus
+- Geolocalisation (with header of request)
+- Anti-abuse
 - Cache
-- Haute performance en lecture
+- High reading performance
 
-- Créer un simple pooler en Go (une application qui permet de faire le controlle entre le backend et la base de données pour apporter des optimisations)
+- Create a simple pooler (a app for control the request on database for optimizing the performance)
+
+# TOFIX :
+
+- model url : replace ShortUrl by ShortCode
+- remove the .env in the repository before prod
