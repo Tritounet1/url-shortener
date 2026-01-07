@@ -102,7 +102,6 @@ func CreateJWTToken(username string) (string, error) {
 
 	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
-		println("err : ", err.Error())
 		return "", err
 	}
 
