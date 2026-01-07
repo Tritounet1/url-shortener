@@ -11,7 +11,7 @@ import (
 func main() {
 	utils.InitClient()
 
-	collections := []string{"user", "url"}
+	collections := []string{"user", "url", "visitor"}
 
 	utils.CreateDatabase("db", collections)
 

@@ -34,15 +34,18 @@ func getShortUrl(c *gin.Context) {
 		}
 	}
 
-	// Update the click counter
 	updateOpts := options.UpdateOne().SetUpsert(false)
 	update := bson.D{{"$inc", bson.D{{"total_clicks", 1}}}}
+
+	// TODO update too user.UpdateAt = time.Now()
 
 	_, err = coll.UpdateOne(context.TODO(), filter, update, updateOpts)
 
 	if err != nil {
 		panic(err)
 	}
+
+	// TODO: create a visitor object and save in the database
 
 	c.Redirect(http.StatusMovedPermanently, result.LongUrl)
 }

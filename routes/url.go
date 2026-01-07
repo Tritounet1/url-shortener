@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"tidy/models"
 	"tidy/utils"
 
@@ -23,7 +24,10 @@ func createNewShortUrl(longUrl string) {
 		fmt.Println("Error generating random string:", err)
 		return
 	}
-	fmt.Println("Random String:", random)
+
+	if !strings.HasPrefix(longUrl, "https://") && !strings.HasPrefix(longUrl, "http://") {
+		longUrl = "https://" + longUrl
+	}
 
 	url := models.NewUrl(longUrl, random)
 
@@ -34,12 +38,15 @@ func createNewShortUrl(longUrl string) {
 
 func createShortUrl(c *gin.Context) {
 	body := createShortUrlDto{}
+
 	data, err := c.GetRawData()
 	if err != nil {
 		c.AbortWithStatusJSON(400, "Input format is wrong")
 		return
 	}
+
 	err = json.Unmarshal(data, &body)
+
 	if err != nil {
 		c.AbortWithStatusJSON(400, "Can't match with the struct")
 		return
@@ -48,6 +55,7 @@ func createShortUrl(c *gin.Context) {
 	createNewShortUrl(body.Url)
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
+		"message": "New url create",
+		"success": true,
 	})
 }

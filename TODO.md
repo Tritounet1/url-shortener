@@ -20,6 +20,8 @@
 
 - Create a simple pooler (a app for control the request on database for optimizing the performance)
 
+- Check the code and improve all the error check
+
 # TOFIX :
 
 - model url : replace ShortUrl by ShortCode

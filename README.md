@@ -1,10 +1,38 @@
 # URL shortener
 
+## Configure .env
+
+```
+cp .env.example .env
+```
+
+and change it.
+
+```
+MONGODB_URI=...
+JWT_SECRET_KEY=...
+PORT=...
+```
+
+## Run dev
+
+Start the application :
+
+```
+go run main
+```
+
+Start the application with [air]((https://github.com/air-verse/air)) :
+
+```sh
+air
+```
+
+For automatically hot reload the app when it changed.
+
 ## Structure of code
 
 ```
-|📦 main.go
-|
 ├─📁 models
 |  ├─ url.go
 |  ├─ user.go
@@ -24,6 +52,11 @@
 ├─📁 utils
 |  └─ client.go
 |  └─ utils.go
+|
+├─🔑 .env
+├─🐳 docker-compose.yml
+├─📦 main.go
+├─📝 TODO.md
 ```
 
 ## Run database
@@ -52,3 +85,4 @@ docker logs backend-mongo-1
 
 - [Mongo official image](https://hub.docker.com/_/mongo)
 - [Getting start with mongodb in Go](https://www.mongodb.com/docs/drivers/go/current/get-started/)
+- [For emojis](https://emojipedia.org/)
