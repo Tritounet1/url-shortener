@@ -14,10 +14,16 @@
 |  ├─ 📁 auth
 |  │   ├─ login.go
 |  │   └─ register.go
+|  └─ default.go
 |  └─ routes.go
+|  └─ url.go
 │
 ├─📁 services
 |  └─ pooler.go
+│
+├─📁 utils
+|  └─ client.go
+|  └─ utils.go
 ```
 
 ## Run database
