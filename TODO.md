@@ -6,6 +6,8 @@
 
 - Add route for create personalized url (random short code or selected by the user)
 
+- Add middleware for protect routes for connected users
+
 - Expired links
 - URLs personalized
 - Delete / desactivate a url

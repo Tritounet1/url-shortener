@@ -1,5 +1,25 @@
 # URL shortener
 
+## Structure of code
+
+```
+|📦 main.go
+|
+├─📁 models
+|  ├─ url.go
+|  ├─ user.go
+|  └─ visitor.go
+|
+├─📁 routes
+|  ├─ 📁 auth
+|  │   ├─ login.go
+|  │   └─ register.go
+|  └─ routes.go
+│
+├─📁 services
+|  └─ pooler.go
+```
+
 ## Run database
 
 ```sh
