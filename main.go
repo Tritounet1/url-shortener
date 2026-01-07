@@ -6,10 +6,13 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"tidy/models"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -79,6 +82,10 @@ func createNewShortUrl(longUrl string) {
 	fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
 }
 
+func router() {
+
+}
+
 func main() {
 	initClient()
 
@@ -93,7 +100,74 @@ func main() {
 		}
 	}()
 
-	createNewShortUrl("https://google.com")
+	// createNewShortUrl("https://google.com")
+
+	// Create a Gin router with default middleware (logger and recovery)
+	router := gin.Default()
+
+	router.POST("/auth/login", func(c *gin.Context) {
+		// Return JSON response
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	router.POST("/auth/register", func(c *gin.Context) {
+		// Return JSON response
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	router.POST("/url", func(c *gin.Context) {
+		// Return JSON response
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	router.GET("/user/:name", func(c *gin.Context) {
+		name := c.Param("name")
+		c.String(http.StatusOK, "Hello %s", name)
+	})
+
+	router.GET("/:short_url", func(c *gin.Context) {
+		shortUrl := c.Param("short_url")
+
+		filter := bson.D{{Key: "short_url", Value: shortUrl}}
+
+		var result models.Url
+
+		coll := client.Database("db").Collection("url")
+
+		err := coll.FindOne(context.TODO(), filter).Decode(&result)
+
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				fmt.Println("No documents found")
+				c.String(http.StatusNotFound, "URL not found")
+				return
+			} else {
+				panic(err)
+			}
+		}
+
+		// Update the click counter
+		updateOpts := options.UpdateOne().SetUpsert(false)
+		update := bson.D{{"$inc", bson.D{{"total_clicks", 1}}}}
+
+		_, err = coll.UpdateOne(context.TODO(), filter, update, updateOpts)
+
+		if err != nil {
+			panic(err)
+		}
+
+		c.Redirect(http.StatusMovedPermanently, result.LongUrl)
+	})
+
+	// Start server on port 8080 (default)
+	// Server will listen on 0.0.0.0:8080 (localhost:8080 on Windows)
+	router.Run()
 
 	/*
 		coll := client.Database("sample_mflix").Collection("movies")

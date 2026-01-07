@@ -3,11 +3,9 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var (
@@ -24,15 +22,17 @@ func connect() {
 		log.Fatal("Error loading .env file")
 	}
 
-	uri := os.Getenv("MONGODB_URI")
+	// uri := os.Getenv("MONGODB_URI")
 
-	for w := 0; w < nb_workers; w++ {
-		worker, err := mongo.Connect(options.Client().ApplyURI(uri))
-		if err != nil {
-			panic(err)
+	/*
+		for w := 0; w < nb_workers; w++ {
+			worker, err := mongo.Connect(options.Client().ApplyURI(uri))
+			if err != nil {
+				panic(err)
+			}
+			workers = append(workers, worker)
 		}
-		workers = append(workers, worker)
-	}
+	*/
 }
 
 func RemoveWorker(s []*mongo.Client, index int) []*mongo.Client {
